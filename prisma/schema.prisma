@@ -1,28 +1,161 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  
 }
 
-model User { 
-  id    Int     @id @default(autoincrement()) 
-  email String  @unique
-  name  String?
-  posts Post[]
-} 
-model Post { 
-  id        Int     @id @default(autoincrement()) 
-  title     String
-  content   String?
-  published Boolean @default(false) 
-  author    User    @relation(fields: [authorId], references: [id]) 
-  authorId  Int
+// ==========================
+// ENUMS
+// ==========================
+
+enum Role {
+  TENANT
+  LANDLORD
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  BANNED
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  RENTED
+  INACTIVE
+}
+
+enum RentalRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ACTIVE
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum PaymentProvider {
+  STRIPE
+  SSLCOMMERZ
+}
+
+// ==========================
+// MODELS
+// ==========================
+
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  password  String
+  role      Role
+  status    UserStatus @default(ACTIVE)
+  phone     String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  properties     Property[]      @relation("LandlordProperties")
+  rentalRequests RentalRequest[] @relation("TenantRentalRequests")
+  reviews        Review[]
+
+  @@map("users")
+}
+
+model Category {
+  id        String     @id @default(uuid())
+  name      String     @unique   // e.g. Apartment, House, Studio
+  createdAt DateTime   @default(now())
+
+  properties Property[]
+
+  @@map("categories")
+}
+
+model Property {
+  id          String         @id @default(uuid())
+  title       String
+  description String
+  location    String
+  price       Float
+  bedrooms    Int
+  bathrooms   Int
+  amenities   String[]       // e.g. ["wifi", "parking", "AC"]
+  images      String[]
+  status      PropertyStatus @default(AVAILABLE)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Relations
+  landlordId String
+  landlord   User   @relation("LandlordProperties", fields: [landlordId], references: [id])
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  rentalRequests RentalRequest[]
+  reviews        Review[]
+
+  @@map("properties")
+}
+
+model RentalRequest {
+  id        String               @id @default(uuid())
+  status    RentalRequestStatus  @default(PENDING)
+  moveInDate DateTime
+  message   String?
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  // Relations
+  tenantId String
+  tenant   User   @relation("TenantRentalRequests", fields: [tenantId], references: [id])
+
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  payment Payment?
+
+  @@map("rental_requests")
+}
+
+model Payment {
+  id            String          @id @default(uuid())
+  transactionId String          @unique
+  amount        Float
+  method        String          // e.g. "card", "mobile-banking"
+  provider      PaymentProvider
+  status        PaymentStatus   @default(PENDING)
+  paidAt        DateTime?
+  createdAt     DateTime        @default(now())
+
+  // Relations
+  rentalRequestId String        @unique
+  rentalRequest   RentalRequest @relation(fields: [rentalRequestId], references: [id])
+
+  @@map("payments")
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int      // 1 to 5
+  comment   String
+  createdAt DateTime @default(now())
+
+  // Relations
+  tenantId String
+  tenant   User   @relation(fields: [tenantId], references: [id])
+
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  @@map("reviews")
 }
