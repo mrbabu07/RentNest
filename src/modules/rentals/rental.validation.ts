@@ -15,4 +15,4 @@ export const updateRentalStatusSchema = z.object({
 });
 
 export type CreateRentalRequestInput = z.infer<typeof createRentalRequestSchema>;
-export type UpdateRentalStatusInput = z.infer<typeof updateRentalStatusSchema>;
+export type UpdateRentalStatusInput = z.infer<typeof updateRentalStatusSchema>; 
