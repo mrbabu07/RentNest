@@ -19,3 +19,8 @@ export const updateUserStatus = catchAsync(async (req: Request, res: Response) =
         data: user,
     });
 });
+
+export const getAllProperties = catchAsync(async (req: Request, res: Response) =>{
+    const properties = await AdminService.getAllPropertiesAdmin();
+    res.status(200).json({success: true, data: properties});
+})
