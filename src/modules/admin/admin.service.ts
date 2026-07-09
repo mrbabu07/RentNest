@@ -57,4 +57,15 @@ export const getAllPropertiesAdmin = async()=> {
     });
 };
 
-export const getLandlordRentalRequestsAdmin
+export const getLandlordRentalRequestsAdmin = async () => {
+    return prisma.rentalRequest.findMany({
+        include: {
+            property: {select: {id: true, title: true, location: true}},
+            tenant: {select: {id: true, name: true, email: true}},
+            payment: true,
+        },
+        orderBy: {createdAt: 'desc'}
+    });
+};
+
+
