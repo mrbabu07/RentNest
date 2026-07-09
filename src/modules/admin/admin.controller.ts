@@ -28,5 +28,10 @@ export const getAllProperties = catchAsync(async (req: Request, res: Response) =
 export const getAllRentalRequests = catchAsync(async(req: Request, res: Response) =>{
     const requests = await AdminService.getAllRentalRequestsAdmin();
     res.status(200).json({success: true, data: requests});
-    
+
 })
+
+export const getDashboardStats = catchAsync(async(req: Request, res: Response)=> {
+    const stats = await AdminService.getDashboardStats();
+    res.status(200).json({success: true, data: stats});;
+});
