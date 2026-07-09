@@ -47,7 +47,6 @@ import reviewRoutes from './modules/reviews/review.routes';
 import adminRoutes from './modules/admin/admin.routes';
 
 
-
 const app: Application = express();
 
 app.use(cors());

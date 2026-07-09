@@ -1,9 +1,17 @@
-import { z } from 'zod';
+import { Router } from 'express';
+import * as adminController from './admin.controller';
+import validate from '../../middlewares/validate.middleware';
+import { updateUserStatusSchema } from './admin.validation';
+import { authenticate, authorize } from '../../middlewares/auth.middleware';
 
-export const updateUserStatusSchema = z.object({
-  status: z.enum(['ACTIVE', 'BANNED'], {
-    errorMap: () => ({ message: 'Status must be ACTIVE or BANNED' }),
-  }),
-});
+const router = Router();
 
-export type UpdateUserStatusInput = z.infer<typeof updateUserStatusSchema>;
+router.use(authenticate, authorize('ADMIN'));
+
+router.get('/stats', adminController.getDashboardStats);
+router.get('/users', adminController.getAllUsers);
+router.patch('/users/:id', validate(updateUserStatusSchema), adminController.updateUserStatus);
+router.get('/properties', adminController.getAllProperties);
+router.get('/rentals', adminController.getAllRentalRequests);
+
+export default router;
