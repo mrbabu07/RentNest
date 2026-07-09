@@ -9,7 +9,7 @@ export const getAllUsers = catchAsync(async (req: Request, res: Response) => {
 
 export const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
   const { status } = req.body;
-  const user = await adminService.updateUserStatus(req.params.id, status);
+  const user = await adminService.updateUserStatus(String(req.params.id), status);
   res.status(200).json({
     success: true,
     message: `User ${status === 'BANNED' ? 'banned' : 'unbanned'} successfully`,

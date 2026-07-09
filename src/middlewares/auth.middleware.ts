@@ -15,7 +15,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     return res.status(401).json({
       success: false,
       message: 'No token provided, access denied',
-
+      errorDetails: null,
     });
   }
   const token = authHeader.split(' ')[1];
@@ -28,6 +28,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     return res.status(401).json({
       success: false,
       message: 'Invalid or expired token',
+      errorDetails: null,
     });
   }
 };
@@ -39,6 +40,7 @@ export const authorize = (...allowedRoles: string[])=>{
       return res.status(403).json({
         success: false,
         message: 'You do not have permission to perform this action',
+        errorDetails: null,
       });
     }
     next();

@@ -14,13 +14,13 @@ export const createReview = catchAsync(async (req: AuthRequest, res: Response) =
 });
 
 export const getPropertyReviews = catchAsync(async (req: Request, res: Response) => {
-  const reviews = await reviewService.getPropertyReviews(req.params.propertyId);
+  const reviews = await reviewService.getPropertyReviews(String(req.params.propertyId));
   res.status(200).json({ success: true, data: reviews });
 });
 
 export const deleteReview = catchAsync(async (req: AuthRequest, res: Response) => {
   const tenantId = req.user!.userId;
-  await reviewService.deleteReview(req.params.id, tenantId);
+  await reviewService.deleteReview(String(req.params.id), tenantId);
   res.status(200).json({
     success: true,
     message: 'Review deleted successfully',

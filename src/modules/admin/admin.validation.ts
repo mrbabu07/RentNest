@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const updateUserStatusSchema = z.object({
   status: z.enum(['ACTIVE', 'BANNED'], {
-    errorMap: () => ({ message: 'Status must be ACTIVE or BANNED' }),
+    message: 'Status must be ACTIVE or BANNED',
   }),
 });
 

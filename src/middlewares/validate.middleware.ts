@@ -25,9 +25,9 @@
 // export default validate;
 
 import { Request, Response, NextFunction } from "express";
-import { AnyZodObject, ZodError } from "zod";
+import { z, ZodError } from "zod";
 
-const validate = (schema: AnyZodObject) => {
+const validate = (schema: z.ZodType) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       req.body = schema.parse(req.body);
@@ -37,7 +37,7 @@ const validate = (schema: AnyZodObject) => {
         return res.status(400).json({
           success: false,
           message: "Validation failed",
-          errorDetails: error.errors.map((e) => ({
+          errorDetails: error.issues.map((e) => ({
             field: e.path.join("."),
             message: e.message,
           })),

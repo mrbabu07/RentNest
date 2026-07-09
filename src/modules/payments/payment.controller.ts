@@ -59,6 +59,6 @@ export const getMyPayments = catchAsync(async (req: AuthRequest, res: Response) 
 
 export const getPaymentById = catchAsync(async (req: AuthRequest, res: Response) => {
   const userId = req.user!.userId;
-  const payment = await paymentService.getPaymentById(req.params.id, userId);
+  const payment = await paymentService.getPaymentById(String(req.params.id), userId);
   res.status(200).json({ success: true, data: payment });
 });

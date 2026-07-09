@@ -20,7 +20,7 @@ export const getAllCategories = catchAsync(async (req: Request, res: Response) =
 });
 
 export const deleteCategory = catchAsync(async (req: Request, res: Response) => {
-  await categoryService.deleteCategory(req.params.id);
+  await categoryService.deleteCategory(String(req.params.id));
   res.status(200).json({
     success: true,
     message: 'Category deleted successfully',

@@ -26,7 +26,7 @@ export const getLandlordRentalRequests = catchAsync(async (req: AuthRequest, res
 });
 
 export const getRentalRequestById = catchAsync(async (req: AuthRequest, res: Response) => {
-  const request = await rentalService.getRentalRequestById(req.params.id);
+  const request = await rentalService.getRentalRequestById(String(req.params.id));
   res.status(200).json({ success: true, data: request });
 });
 
@@ -34,7 +34,7 @@ export const updateRentalRequestStatus = catchAsync(async (req: AuthRequest, res
   const landlordId = req.user!.userId;
   const { status } = req.body;
   const request = await rentalService.updateRentalRequestStatus(
-    req.params.id,
+    String(req.params.id),
     landlordId,
     status
   );
