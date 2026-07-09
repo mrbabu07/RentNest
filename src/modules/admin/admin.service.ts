@@ -69,3 +69,27 @@ export const getLandlordRentalRequestsAdmin = async () => {
 };
 
 
+export const getDashboardStats = async () => {
+    const [totalUsers, totalTenants, totalLandlords, totalProperties, totalRentalRequests, totalRevenue] =
+    await promise.all ([
+        prisma.user.count(),
+        prisma.user.count({where: {role: 'TENANT'}}),
+        prisma.user.count({where: {role: 'LANDLORD'}}),
+        prisma.property.count(),
+        prisma.rentalRequest.count(),
+        prisma.payment.aggregate({
+            where: {status: 'COMPLETED'},
+            _sum: {amount: true},
+        }),
+    ]);
+
+    return {
+        totalUsers,
+        totalTenants,
+        totalLandlords,
+        totalProperties,
+        totalRentalRequests,
+        totalRevenue: totalRevenue._sum.amount || 0,
+    };
+};
+
